@@ -29,12 +29,7 @@ function overlaps(a: string[], b: string[]): boolean {
   const b0 = Number.parseInt(b[0]);
   const b1 = Number.parseInt(b[1]);
 
-  if (a0 === b0 || a0 === b1 || a1 === b0 || a1 === b1) {
-    return true;
-  } else if (a1 >= b0 && a0 <= b0) {
-    return true;
-  } else if (b1 >= a0 && b0 <= a0) {
-    return true;
-  }
-  return false;
+  // a0 <= b0 <= a1
+  // b0 <= a0 <= b1
+  return (a1 >= b0 && a0 <= b0 || b1 >= a0 && b0 <= a0) ;
 }
