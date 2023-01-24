@@ -110,7 +110,6 @@ function scenicScore(grid: number[][]): number {
         i++;
       }
 
-      
       let bottomScore = 0;
       i = 1;
       while (grid[y + i]?.[x] != null) {
@@ -122,8 +121,8 @@ function scenicScore(grid: number[][]): number {
       }
 
       const score = leftScore * rightScore * topScore * bottomScore;
-      maxScore = Math.max(score, maxScore); 
-    } 
+      maxScore = Math.max(score, maxScore);
+    }
   }
   return maxScore;
 }
