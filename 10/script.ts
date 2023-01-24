@@ -9,7 +9,7 @@ function signalStrength(instructions: string[]): number {
 
   for (const instruction of instructions) {
     const [opCode, arg] = instruction.trim().split(" ");
-
+    checkCycle();
     switch (opCode) {
       case "addx":
         cycle++;
@@ -23,7 +23,6 @@ function signalStrength(instructions: string[]): number {
       default:
         throw new Error("Invalid input.");
     }
-    checkCycle();
   }
 
   return signalStrength;
@@ -31,7 +30,25 @@ function signalStrength(instructions: string[]): number {
   function checkCycle() {
     if ((cycle - 20) % 40 === 0) {
       signalStrength += cycle * x_reg;
-      console.log(`Cycle: ${cycle}\nX: ${x_reg}\nSignal: ${signalStrength}`);
+    }
+    draw();
+  }
+
+  function draw() {
+    const encoder = new TextEncoder();
+    let pos = cycle - 1;
+    if (cycle > 40) {
+      pos = (cycle % 40) - 1;
+    }
+
+    let pixel = ".";
+    if (Math.abs(x_reg - pos) < 2) {
+      pixel = "#";
+    }
+
+    Deno.stdout.writeSync(encoder.encode(pixel));
+    if (cycle % 40 === 0) {
+      Deno.stdout.writeSync(encoder.encode("\n"));
     }
   }
 }
