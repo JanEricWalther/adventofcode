@@ -1,12 +1,13 @@
 const input = Deno.readTextFileSync(Deno.args[0]).trim();
 
-console.log(`Part 1: ${signalStrength(input.split("\n"))}`);
+console.log(`Signal Strength: ${solve(input.split("\n"))}`);
 
-function signalStrength(instructions: string[]): number {
+function solve(instructions: string[]): number {
   let cycle = 1;
   let signalStrength = 0;
   let x_reg = 1;
-
+  console.log('');
+  
   for (const instruction of instructions) {
     const [opCode, arg] = instruction.trim().split(" ");
     checkCycle();
@@ -24,7 +25,7 @@ function signalStrength(instructions: string[]): number {
         throw new Error("Invalid input.");
     }
   }
-
+  console.log('');
   return signalStrength;
 
   function checkCycle() {
@@ -36,19 +37,13 @@ function signalStrength(instructions: string[]): number {
 
   function draw() {
     const encoder = new TextEncoder();
-    let pos = cycle - 1;
-    if (cycle > 40) {
-      pos = (cycle % 40) - 1;
-    }
-
-    let pixel = ".";
-    if (Math.abs(x_reg - pos) < 2) {
-      pixel = "#";
-    }
+    const pos = cycle > 40 ? (cycle % 40) - 1 : cycle - 1;
+    const pixel = Math.abs(x_reg - pos) < 2 ? "#" : ".";
 
     Deno.stdout.writeSync(encoder.encode(pixel));
     if (cycle % 40 === 0) {
       Deno.stdout.writeSync(encoder.encode("\n"));
+      
     }
   }
 }
