@@ -1,4 +1,4 @@
-import { Monkey, Game, WorryFunction } from './monkey.ts';
+import { Game, Monkey, WorryFunction } from "./monkey.ts";
 
 const input = Deno.readTextFileSync(Deno.args[0]).trim();
 
@@ -9,13 +9,14 @@ function monkeyBusiness(input: string): number {
   for (const config of parseInput(input)) {
     monkeys.push(new Monkey(config));
   }
-  
+
   const game = new Game(monkeys);
   for (const i of Array(20).keys()) {
     game.playRound();
-    
   }
-  const counts = game.inspectionCounts.sort();
+  const counts = game.inspectionCounts.sort((a, b) => b - a);
+  console.log(counts);
+
   return counts[0] * counts[1];
 }
 
@@ -59,12 +60,12 @@ function parseInput(input: string) {
         case 2: {
           const operation = line.split(":")[1].trim();
           // new = old * 19
-          const [,, left, op, right] = operation.split(' ');
+          const [, , left, op, right] = operation.split(" ");
           const worryFn = (oldVal: number) => {
-            const leftVal = left === 'old' ? oldVal : +left;
-            const rightVal = right === 'old' ? oldVal : +right;
+            const leftVal = left === "old" ? oldVal : +left;
+            const rightVal = right === "old" ? oldVal : +right;
             // op is only + or *
-            return op === '+' ? leftVal + rightVal : leftVal * rightVal;
+            return op === "+" ? leftVal + rightVal : leftVal * rightVal;
           };
           acc.worryFn = worryFn;
           break;
@@ -99,5 +100,4 @@ function parseInput(input: string) {
     store.push(monkey);
   }
   return store;
-  
 }
