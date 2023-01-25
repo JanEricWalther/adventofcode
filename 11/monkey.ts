@@ -53,8 +53,8 @@ class Game {
         } else {
           this.monkeys[monkey.if_false_throw_to].items.push(item);
         }
-        monkey.inspectionCount++;
       }
+      monkey.inspectionCount += monkey.items.length;
       monkey.items = [];
     }
   }

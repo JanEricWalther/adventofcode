@@ -15,7 +15,6 @@ function monkeyBusiness(input: string): number {
     game.playRound();
   }
   const counts = game.inspectionCounts.sort((a, b) => b - a);
-  console.log(counts);
 
   return counts[0] * counts[1];
 }
