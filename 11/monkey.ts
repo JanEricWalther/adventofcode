@@ -39,15 +39,31 @@ class Monkey {
 
 class Game {
   monkeys: Array<Monkey>;
+  isPartOne: boolean;
+  mod: number;
 
-  constructor(monkeys: Array<Monkey>) {
-    this.monkeys = monkeys;    
+  constructor(monkeys: Array<Monkey>, isPartOne: boolean) {
+    this.monkeys = monkeys;
+    this.isPartOne = isPartOne;
+
+    // divisibleBy are always Primes
+    // so we can mod the item by the Product of all divisibleBys 
+    // to keep the number at a managable Size
+    this.mod = monkeys.map((monkey) => monkey.divisibleBy).reduce(
+      (a, b) => a * b,
+      1,
+    );
   }
 
   playRound = () => {
     for (const monkey of this.monkeys) {
       for (const item of monkey.items) {
-        item.worry = Math.floor(monkey.worryFn(item.worry) / 3);
+        item.worry = monkey.worryFn(item.worry);
+        if (this.isPartOne) {
+          item.worry = Math.trunc(item.worry / 3);
+        } else {
+          item.worry %= this.mod; 
+        }
         if (item.worry % monkey.divisibleBy === 0) {
           this.monkeys[monkey.if_true_throw_to].items.push(item);
         } else {
@@ -57,11 +73,13 @@ class Game {
       monkey.inspectionCount += monkey.items.length;
       monkey.items = [];
     }
-  }
+  };
 
   get inspectionCounts() {
-    return this.monkeys.map(monkey => monkey.inspectionCount);
+    return this.monkeys.map((monkey) => monkey.inspectionCount).sort((a, b) =>
+      b - a
+    );
   }
 }
 
-export { Game,  Monkey };
+export { Game, Monkey };

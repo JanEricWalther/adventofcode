@@ -2,20 +2,22 @@ import { Game, Monkey, WorryFunction } from "./monkey.ts";
 
 const input = Deno.readTextFileSync(Deno.args[0]).trim();
 
-console.log(monkeyBusiness(input));
+console.log(monkeyBusiness(input, 20, true));
+console.log(monkeyBusiness(input, 10_000, false));
 
-function monkeyBusiness(input: string): number {
+function monkeyBusiness(input: string, rounds: number, partOne: boolean): number {
   const monkeys: Monkey[] = [];
   for (const config of parseInput(input)) {
     monkeys.push(new Monkey(config));
   }
 
-  const game = new Game(monkeys);
-  for (const i of Array(20).keys()) {
+  const game = new Game(monkeys, partOne);
+  for (const _ of Array(rounds).keys()) {
     game.playRound();
   }
-  const counts = game.inspectionCounts.sort((a, b) => b - a);
-
+  const counts = game.inspectionCounts;
+  console.log(counts);
+  
   return counts[0] * counts[1];
 }
 
