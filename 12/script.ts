@@ -26,13 +26,15 @@ class Point {
 const input = Deno.readTextFileSync(Deno.args[0]).trim();
 
 console.log("Fewest Steps:", solve(parse(input)));
+console.log("Fewest Steps From any Start:", solve(parse(input), true));
 
-function solve(input: string[][]) {
+function solve(input: string[][], partTwo = false) {
   const map: number[][] = Array(input.length).fill(null).map((_) =>
     Array(input[0].length).fill(false)
   );
   let S: Point;
   let E: Point;
+  const starts: Point[] = [];
   for (let y = 0; y < input.length; y++) {
     for (let x = 0; x < input[y].length; x++) {
       const cell = input[y][x];
@@ -45,12 +47,26 @@ function solve(input: string[][]) {
         // Destination E has elevation z
         input[y][x] = "z";
       }
+      if (cell === "a") {
+        starts.push(new Point(x, y));
+      }
       // While we are looping, re-encode chars to ints, to make our elevation comparisons easier
       map[y][x] = input[y][x].charCodeAt(0);
     }
   }
-  const path = getShortestPath(S!, E!);
-  return path.length;
+  if (!partTwo) {
+    const path = getShortestPath(S!, E!);
+    return path.length;
+  }
+  // this prolly isn't the fasted way, but it works for the inputs given...
+  let minPathLength = Number.MAX_SAFE_INTEGER;
+  for (const start of starts) {
+    const path = getShortestPath(start, E!);
+    if (path.length > 0) {
+      minPathLength = Math.min(minPathLength, path.length);
+    }
+  }
+  return minPathLength;
 
   function getNeighbors(p: Point) {
     return [
