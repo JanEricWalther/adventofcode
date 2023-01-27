@@ -1,8 +1,9 @@
 const input = Deno.readTextFileSync(Deno.args[0]).trim();
 
-console.log(solve(parse(input)));
+console.log(sumOfPackets(parse(input)));
+console.log(dividerPacketPositions(parse(input)));
 
-function solve(packets: number[][][]) {
+function sumOfPackets(packets: number[][][]) {
   const rightOrder: number[] = [];
   let pairIndex = 1;
 
@@ -18,7 +19,29 @@ function solve(packets: number[][][]) {
   return rightOrder.reduce((a, b) => a + b, 0);
 }
 
-function compare(left: number[], right: number[]): boolean | null {
+function dividerPacketPositions(packets: any[]) {
+  const divider2 = [[2]];
+  const divider6 = [[6]];
+
+  packets = [...packets.flat(), divider2, divider6];
+  packets.sort((a, b) => {
+    const cmp = compare(a, b);
+    if (cmp) {
+      return -1;
+    } else if (cmp !== null) {
+      // false && not null
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+
+  const pos2 = packets.indexOf(divider2)+1;
+  const pos6 = packets.indexOf(divider6)+1;
+  return pos2*pos6;
+}
+
+function compare(left: any[], right: any[]): boolean | null {
   // Loop the upper bounds of left and right
   for (let i = 0; i < Math.max(left.length, right.length); i++) {
     const leftItem = left[i];
