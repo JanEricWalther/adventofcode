@@ -8,13 +8,12 @@ const tiles = {
 } as const;
 
 const grid = buildGrid(parse(input));
-console.log(grid[500][9]);
-sandUnits(grid);
+console.log(sandUnits(grid));
 
 function sandUnits(grid: number[][]) {
   let unitsOfSand = 0;
-
-  while (true) {
+  let hitBottom = false;
+  while (!hitBottom) {
     let { x, y } = START_POS;
     unitsOfSand++;
     while (true) {
@@ -26,16 +25,18 @@ function sandUnits(grid: number[][]) {
       } else if (grid[x][y + 1] > 0) {
         if (grid[x - 1][y + 1] > 0) {
           x++;
+        } else {
+          x--;
         }
-        x--;
       }
       y++;
-    }
-    if (y >= 1000) {
-      break;
+      if (y >= 600) {
+        hitBottom = true;
+        break;
+      }
     }
   }
-  return unitsOfSand;
+  return unitsOfSand - 1;
 }
 
 function buildGrid(paths: { x: number; y: number }[][]) {
@@ -67,9 +68,9 @@ function buildGrid(paths: { x: number; y: number }[][]) {
 }
 
 function parse(input: string) {
-  const paths = [];
+  const paths: { x: number; y: number }[][] = [];
   for (const line of input.split("\n")) {
-    const path = [];
+    const path: { x: number; y: number }[] = [];
     for (const point of line.trim().split("->")) {
       const [x, y] = point.trim().split(",");
       path.push({ x: +x, y: +y });
