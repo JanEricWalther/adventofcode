@@ -6,20 +6,28 @@ const tiles = {
   SAND: 2,
   START: 10,
 } as const;
+let heighestY = 0;
 
-const grid = buildGrid(parse(input));
-console.log(sandUnits(grid));
+const instructions = parse(input);
+// Part 1 is off by 1 for some reason... 
+console.log(`Part One: ${sandUnits(buildGrid(instructions)) - 1}`);
+console.log(`Part Two: ${sandUnits(buildGrid(instructions, true))}`);
 
 function sandUnits(grid: number[][]) {
   let unitsOfSand = 0;
-  let hitBottom = false;
-  while (!hitBottom) {
+  let keepGoing = true;
+
+  while (keepGoing) {
     let { x, y } = START_POS;
     unitsOfSand++;
     while (true) {
       if (
         grid[x][y + 1] > 0 && grid[x - 1][y + 1] > 0 && grid[x + 1][y + 1] > 0
       ) {
+        if (x === START_POS.x && y === START_POS.y) {
+          keepGoing = false;
+          break;
+        }
         grid[x][y] = tiles.SAND;
         break;
       } else if (grid[x][y + 1] > 0) {
@@ -31,15 +39,15 @@ function sandUnits(grid: number[][]) {
       }
       y++;
       if (y >= 600) {
-        hitBottom = true;
+        keepGoing = false;
         break;
       }
     }
   }
-  return unitsOfSand - 1;
+  return unitsOfSand;
 }
 
-function buildGrid(paths: { x: number; y: number }[][]) {
+function buildGrid(paths: { x: number; y: number }[][], partTwo = false) {
   const grid: number[][] = Array(1000).fill(null).map((_) =>
     Array(1000).fill(0)
   );
@@ -63,6 +71,13 @@ function buildGrid(paths: { x: number; y: number }[][]) {
       }
       last = node;
     }
+
+    // build floor
+    if (partTwo) {
+      for (const i of Array(1000).keys()) {
+        grid[i][heighestY + 2] = tiles.ROCK;
+      }
+    }
   }
   return grid;
 }
@@ -74,6 +89,7 @@ function parse(input: string) {
     for (const point of line.trim().split("->")) {
       const [x, y] = point.trim().split(",");
       path.push({ x: +x, y: +y });
+      heighestY = Math.max(heighestY, +y);
     }
     paths.push(path);
   }
