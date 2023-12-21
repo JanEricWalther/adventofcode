@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	file_name := "input.txt"
+	file_name := "test.txt"
 
 	data, err := os.ReadFile(file_name)
 
@@ -94,7 +94,7 @@ func getCards(hand string) []pokerCard {
 func getHandType(hand []pokerCard) pokerHand {
 	max, max2 := pokerCard(0), pokerCard(0)
 
-	for _, v := range hand {
+	for _, v := range hand[1:] {
 		if v >= max {
 			max2 = max
 			max = v
@@ -102,6 +102,8 @@ func getHandType(hand []pokerCard) pokerHand {
 			max2 = v
 		}
 	}
+
+	max += hand[0]
 
 	switch max {
 	case 5:
@@ -123,7 +125,8 @@ func getHandType(hand []pokerCard) pokerHand {
 	}
 }
 
-var pokerCardMap = []rune{'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'}
+// var pokerCardMap = []rune{'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'}
+var pokerCardMap = []rune{'J', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'Q', 'K', 'A'}
 
 func solve(hands []hand) int {
 	totalWinnings := 0
