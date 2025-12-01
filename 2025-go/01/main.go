@@ -15,9 +15,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// fmt.Print(string(data))
 
-	dial := Dial{pos: 50, zeroCount: 0}
+	countClicks := false
+	if len(os.Args) == 3 && (os.Args[2] == "-c" || os.Args[2] == "--clicks") {
+		countClicks = true
+	}
+
+	dial := Dial{pos: 50, zeroCount: 0, allClicks: countClicks, debug: false}
 
 	for _, line := range strings.Split(string(data), "\n") {
 		dial.exec(line)
@@ -29,24 +33,40 @@ func main() {
 type Dial struct {
 	pos       int
 	zeroCount int
+	allClicks bool
+	debug     bool
 }
 
 func (d *Dial) exec(s string) {
 	val := parseRotation(s)
+	if d.allClicks {
+		zeros := abs(val) / 100
+		d.zeroCount += zeros
+	}
 	val %= 100
 
 	d.pos += val
+	if d.pos == 0 || d.pos == 100 {
+		d.pos = 0
+		d.zeroCount++
+	}
+
 	if d.pos < 0 {
+		if d.allClicks && d.pos-val != 0 {
+			d.zeroCount++
+		}
 		d.pos += 100
 	}
-	if d.pos >= 100 {
+	if d.pos > 100 {
+		if d.allClicks && d.pos-val != 0 {
+			d.zeroCount++
+		}
 		d.pos -= 100
 	}
 
-	if d.pos == 0 {
-		d.zeroCount++
+	if d.debug {
+		fmt.Println("After", s, "pos:", d.pos, "zeros:", d.zeroCount)
 	}
-	fmt.Println(s, "->", d.pos)
 }
 
 func parseRotation(s string) int {
@@ -64,4 +84,11 @@ func parseRotation(s string) int {
 		return dir * value
 	}
 	return 0
+}
+
+func abs(a int) int {
+	if a < 0 {
+		return -a
+	}
+	return a
 }
