@@ -16,3 +16,16 @@ func TestPart1(t *testing.T) {
 		t.Errorf("Part One: expected %d, got %d", expected, result)
 	}
 }
+
+func TestPart2(t *testing.T) {
+	data := `987654321111111
+811111111111119
+234234234234278
+818181911112111`
+
+	expected := 3121910778619
+	result := solveTwo(data)
+	if result != expected {
+		t.Errorf("Part Two: expected %d, got %d", expected, result)
+	}
+}

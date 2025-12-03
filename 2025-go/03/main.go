@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+const DEBUG = true
+
 func main() {
 	file_name := os.Args[1]
 
@@ -37,7 +39,17 @@ func solveOne(data string) int {
 }
 
 func solveTwo(data string) int {
-	return 0
+	sum := 0
+
+	for _, line := range strings.Split(string(data), "\n") {
+		arr := parse(line)
+
+		total := findHighestDigits(arr, 12)
+
+		sum += total
+	}
+
+	return sum
 }
 
 func parse(s string) []int {
@@ -72,4 +84,24 @@ func findLargestLowDigit(arr []int, start int) int {
 	}
 
 	return max
+}
+
+func findHighestDigits(arr []int, count int) int {
+	l := len(arr)
+	m := make([][]int, l+1)
+
+	for i := range l + 1 {
+		m[i] = make([]int, count+1)
+	}
+
+	for i := range l {
+		for j := range count + 1 {
+			m[i+1][j] = max(m[i][j], m[i+1][j])
+
+			if j < count {
+				m[i+1][j+1] = max(m[i+1][j+1], 10*m[i][j]+arr[i])
+			}
+		}
+	}
+	return m[l][count]
 }
