@@ -25,9 +25,44 @@ func main() {
 }
 
 func solveOne(data string) int {
-	sum := 0
 	grid := parse(data)
 
+	return getValid(grid)
+}
+
+func solveTwo(data string) int {
+	grid := parse(data)
+
+	sum := 0
+
+	for {
+		removed := getValid(grid)
+		if removed == 0 {
+			return sum
+		}
+		sum += removed
+	}
+}
+
+func parse(s string) [][]int {
+	var arr [][]int
+
+	for _, line := range strings.Split(s, "\n") {
+		var row []int
+		for _, ch := range line {
+			if ch == '@' {
+				row = append(row, 1)
+			} else {
+				row = append(row, 0)
+			}
+		}
+		arr = append(arr, row)
+	}
+	return arr
+}
+
+func getValid(grid [][]int) int {
+	removable := make([][2]int, 0)
 	for i := 0; i < len(grid); i++ {
 		for j := 0; j < len(grid[i]); j++ {
 			if grid[i][j] == 1 {
@@ -46,7 +81,7 @@ func solveOne(data string) int {
 					}
 				}
 				if neighbors < 4 {
-					sum++
+					removable = append(removable, [2]int{i, j})
 				}
 
 				if DEBUG {
@@ -58,27 +93,11 @@ func solveOne(data string) int {
 			fmt.Printf("\n")
 		}
 	}
+	sum := len(removable)
+	// remove accessible
+	for _, pos := range removable {
+		grid[pos[0]][pos[1]] = 0
+	}
 
 	return sum
-}
-
-func solveTwo(data string) int {
-	return 0
-}
-
-func parse(s string) [][]int {
-	var arr [][]int
-
-	for _, line := range strings.Split(s, "\n") {
-		var row []int
-		for _, ch := range line {
-			if ch == '@' {
-				row = append(row, 1)
-			} else {
-				row = append(row, 0)
-			}
-		}
-		arr = append(arr, row)
-	}
-	return arr
 }

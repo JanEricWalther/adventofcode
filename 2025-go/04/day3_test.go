@@ -35,7 +35,7 @@ func TestPart2(t *testing.T) {
 .@@@@@@@@.
 @.@.@@@.@.`
 
-	expected := 0
+	expected := 43
 	result := solveTwo(data)
 	if result != expected {
 		t.Errorf("Part Two: expected %d, got %d", expected, result)
