@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -40,8 +41,10 @@ func solveOne(data string) int {
 }
 
 func solveTwo(data string) int {
-	return 0
+	input := strings.Split(data, "\n\n")[0]
+	fresh := parseRanges(input)
 
+	return freshIdCount(fresh)
 }
 
 func parseRanges(s string) [][2]int {
@@ -81,4 +84,42 @@ func checkId(id int, ranges [][2]int) int {
 		}
 	}
 	return 0
+}
+
+// func freshIdCount(ranges [][2]int) int {
+// 	m := make(map[int]bool)
+// 	for _, r := range ranges {
+// 		for i := r[0]; i <= r[1]; i++ {
+// 			m[i] = true
+// 		}
+// 	}
+// 	return len(m)
+// }
+
+func freshIdCount(ranges [][2]int) int {
+	slices.SortFunc(ranges, func(a, b [2]int) int {
+		return a[0] - b[0]
+	})
+
+	sum := 0
+	current := 0
+	for _, r := range ranges {
+		count := r[1] - r[0] + 1
+		sum += count
+		if r[0] <= current {
+			diff := current - r[0] + 1
+			if diff > count {
+				diff = count
+			}
+			sum -= diff
+		}
+		if r[1] > current {
+			current = r[1]
+		}
+
+		if DEBUG {
+			fmt.Printf("Range: %v, sum: %d, current: %d\n", r, sum, current)
+		}
+	}
+	return sum
 }
